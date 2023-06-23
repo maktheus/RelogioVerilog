@@ -16,6 +16,27 @@ module divisorDeFrequencia(
 endmodule
 
 
+module segDisplayControl(
+    input [3:0] number,
+    output reg [6:0] segment
+);
+    always @(*) begin
+        case(number)
+            4'b0000: segment = 7'b1000000; // 0
+            4'b0001: segment = 7'b1111001; // 1
+            4'b0010: segment = 7'b0100100; // 2
+            4'b0011: segment = 7'b0110000; // 3
+            4'b0100: segment = 7'b0011001; // 4
+            4'b0101: segment = 7'b0010010; // 5
+            4'b0110: segment = 7'b0000010; // 6
+            4'b0111: segment = 7'b1111000; // 7
+            4'b1000: segment = 7'b0000000; // 8
+            4'b1001: segment = 7'b0010000; // 9
+            default: segment = 7'b1111111; // OFF
+        endcase
+    end
+endmodule
+
 module moduleSeveSegmentDisplay(
     input [3:0] number,
     input [3:0] number2,
@@ -25,6 +46,8 @@ module moduleSeveSegmentDisplay(
 
     reg selectionSegment = 0;
     reg [3:0] counter = 0;
+    wire [6:0] segment1;
+    wire [6:0] segment2;
 
     // 7 segment display switch Case
 
@@ -37,33 +60,17 @@ module moduleSeveSegmentDisplay(
         end
     end
 
-    always @(*) begin
-        if(selectionSegment) begin
-            if (number == 4'b0000) segment = 7'b1000000; // 0
-            else if (number == 4'b0001) segment = 7'b1111001; // 1
-            else if (number == 4'b0010) segment = 7'b0100100; // 2
-            else if (number == 4'b0011) segment = 7'b0110000; // 3
-            else if (number == 4'b0100) segment = 7'b0011001; // 4
-            else if (number == 4'b0101) segment = 7'b0010010; // 5
-            else if (number == 4'b0110) segment = 7'b0000010; // 6
-            else if (number == 4'b0111) segment = 7'b1111000; // 7
-            else if (number == 4'b1000) segment = 7'b0000000; // 8
-            else if (number == 4'b1001) segment = 7'b0010000; // 9
-            else segment = 7'b1111111; // OFF
-        end else begin
-            if (number2 == 4'b0000) segment = 7'b1000000; // 0
-            else if (number2 == 4'b0001) segment = 7'b1111001; // 1
-            else if (number2 == 4'b0010) segment = 7'b0100100; // 2
-            else if (number2 == 4'b0011) segment = 7'b0110000; // 3
-            else if (number2 == 4'b0100) segment = 7'b0011001; // 4
-            else if (number2 == 4'b0101) segment = 7'b0010010; // 5
-            else if (number2 == 4'b0110) segment = 7'b0000010; // 6
-            else if (number2 == 4'b0111) segment = 7'b1111000; // 7
-            else if (number2 == 4'b1000) segment = 7'b0000000; // 8
-            else if (number2 == 4'b1001) segment = 7'b0010000; // 9
-            else segment = 7'b1111111; // OFF
-        end
-    end
+    segDisplayControl segDisplay1(
+        .number(number),
+        .segment(segment1)
+    );
+
+    segDisplayControl segDisplay2(
+        .number(number2),
+        .segment(segment2)
+    );
+
+    assign segment = selectionSegment ? segment1 : segment2;
 endmodule
 
 
