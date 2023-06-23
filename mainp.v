@@ -77,6 +77,7 @@ module moduleSeveSegmentDisplay(
     input [3:0] number,
     input [3:0] number2,
     input clk,
+    input reset,
     output  [6:0] segment
 );
 
@@ -87,12 +88,19 @@ module moduleSeveSegmentDisplay(
 
     // 7 segment display switch Case
 
+
     always @(posedge clk) begin
-        if(counter == 4'b1111) begin
+        if(reset) begin
             counter <= 0;
-            selectionSegment <= ~selectionSegment;
-        end else begin
-            counter <= counter + 1;
+            selectionSegment <= 0;
+        end
+        else begin
+            if(counter == 4'b1111) begin
+                counter <= 0;
+                selectionSegment <= ~selectionSegment;
+            end else begin
+                counter <= counter + 1;
+            end
         end
     end
 
